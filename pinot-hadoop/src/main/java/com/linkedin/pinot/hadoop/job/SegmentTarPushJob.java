@@ -34,6 +34,8 @@ public class SegmentTarPushJob extends Configured {
   private String _segmentPath;
   private String[] _hosts;
   private String _port;
+  public static final int MAX_RETRIES = 5;
+  public static final int SLEEP_BETWEEN_RETRIES_IN_SECONDS = 60;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SegmentTarPushJob.class);
 
@@ -85,7 +87,7 @@ public class SegmentTarPushJob extends Configured {
         fileName = fileName.split(".tar")[0];
         LOGGER.info("******** Upoading file: {} to Host: {} and Port: {} *******", fileName, host, _port);
         try {
-          int responseCode = FileUploadUtils.sendSegmentFile(host, _port, fileName, inputStream, length);
+          int responseCode = sendSegmentFile(host, _port, fileName, fs, path, length);
           LOGGER.info("Response code: {}", responseCode);
         } catch (Exception e) {
           LOGGER.error("******** Error Upoading file: {} to Host: {} and Port: {}  *******", fileName, host, _port);
@@ -96,6 +98,31 @@ public class SegmentTarPushJob extends Configured {
         inputStream.close();
       }
     }
+  }
+
+  public static int sendSegmentFile(final String host, final String port, final String fileName,
+      final FileSystem fs, final Path path, final long lengthInBytes) {
+    int retval = 0;
+    for (int numRetries = 0; ; numRetries++) {
+      try {
+        InputStream inputStream = fs.open(path);
+        retval = FileUploadUtils.sendSegmentFile(host, port, fileName, inputStream, lengthInBytes);
+        break;
+      } catch (Exception e) {
+        if (numRetries >= MAX_RETRIES) {
+          throw new RuntimeException(e);
+        }
+        LOGGER.warn("Retry " + numRetries + " of Upload of File " + fileName + " to host " + host
+            + " after error trying to send file ");
+        try {
+          Thread.sleep(SLEEP_BETWEEN_RETRIES_IN_SECONDS * 1000);
+        } catch (Exception e1) {
+          LOGGER.warn("Upload of File " + fileName + " to host " + host + " interrupted while waiting to retry after error");
+          throw new RuntimeException(e1);
+        }
+      }
+    }
+    return retval;
   }
 
 }

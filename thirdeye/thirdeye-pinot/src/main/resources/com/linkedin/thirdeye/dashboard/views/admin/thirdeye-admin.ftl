@@ -22,18 +22,25 @@
 <script src="../../../assets/js/lib/dataset-config.js"></script>
 <script src="../../../assets/js/lib/job-info.js"></script>
 
+<script src="../../../assets/js/lib/common/utility.js" defer></script>
+
+<!-- JSON Editor comes here-->
+<link rel="stylesheet" href="../../../assets/jsonedit/jsoneditor.min.css"/>
+<script src="../../../assets/jsonedit/jsoneditor.min.js" defer></script>
+<script src="../../../assets/js/lib/entity-editor.js"></script>
+
 <script type="text/javascript">
   $(document).ready(function() {
     //compile templates
     var ingraph_metric_config_template = $("#ingraph-metric-config-template").html();
     ingraph_metric_config_template_compiled = Handlebars.compile(ingraph_metric_config_template);
-    
+
     var metric_config_template = $("#metric-config-template").html();
     metric_config_template_compiled = Handlebars.compile(metric_config_template);
-    
+
     var job_info_template = $("#job-info-template").html();
     job_info_template_compiled = Handlebars.compile(job_info_template);
-    
+
     //register callbacks on tabs
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       e.target // newly activated tab
@@ -53,7 +60,10 @@
       	listDatasetConfigs();
       }
       if(tabId == "#job-info"){
-      	listJobs();
+        listJobs();
+      }
+      if(tabId == "#entity-editor"){
+        renderConfigSelector();
       }
     })
   });
@@ -66,7 +76,8 @@
 			<li class=""><a href="#ingraph-dashboard-config" data-toggle="tab">Ingraph Dashboard</a></li>
 			<li class=""><a href="#dataset-config" data-toggle="tab">Dataset </a></li>
 			<li class=""><a href="#metric-config" data-toggle="tab">Metric</a></li>
-			<li class=""><a href="#job-info" data-toggle="tab">JobInfo</a></li>
+      <li class=""><a href="#job-info" data-toggle="tab">JobInfo</a></li>
+      <li class=""><a href="#entity-editor" data-toggle="tab">Entity Editor</a></li>
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane" id="ingraph-metric-config">
@@ -85,10 +96,13 @@
    			   <#include "metric-config.ftl">
 			   <div id="metric-config-place-holder"></div>
 			</div>
-			<div class="tab-pane" id="job-info">
-				<#include "job-info.ftl">
-			   <div id="job-info-place-holder"></div>
-			</div>
+      <div class="tab-pane" id="job-info">
+			<#include "job-info.ftl">
+        <div id="job-info-place-holder"></div>
+      </div>
+			<div class="tab-pane" id="entity-editor">
+      <div id="entity-editor-place-holder"></div>
+    </div>
 		</div>
 	</div>
 </body>

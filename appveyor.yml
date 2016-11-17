@@ -18,6 +18,6 @@ install:
   - mvn clean install -B -DskipTests=true -Dmaven.javadoc.skip=true -Dassembly.skipAssembly=true
 
 test_script:
-  - mvn test -B -P travis,travis-no-integration-tests
-
+ # - mvn test -B -P travis,travis-no-integration-tests
+  - mvn test -pl pinot-common
 build: off

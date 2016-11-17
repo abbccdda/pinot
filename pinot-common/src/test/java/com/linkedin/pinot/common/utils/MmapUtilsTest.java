@@ -32,20 +32,24 @@ public class MmapUtilsTest {
     assertEquals(new MmapUtils.AllocationContext(null, "potato", MmapUtils.AllocationType.MMAP).getContext(), "potato");
 
     // With various paths
+    String prefix = "/";
+    if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
+      prefix = "C:\\\\";
+    }
     assertEquals(
         new MmapUtils.AllocationContext(new File("a"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
         "a (potato)");
     assertEquals(
         new MmapUtils.AllocationContext(new File("/a"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-        "/a (potato)");
+            prefix + "a (potato)");
     assertEquals(
         new MmapUtils.AllocationContext(new File("/a/b"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-        "/a/b (potato)");
+            prefix + "a/b (potato)");
     assertEquals(
         new MmapUtils.AllocationContext(new File("/a/b/c"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-        "/a/b/c (potato)");
+            prefix + "a/b/c (potato)");
     assertEquals(
         new MmapUtils.AllocationContext(new File("/a/b/c/d"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-        "/a/b/c/d (potato)");
+            prefix + "a/b/c/d (potato)");
   }
 }

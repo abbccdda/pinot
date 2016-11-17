@@ -31,25 +31,41 @@ public class MmapUtilsTest {
     assertEquals(new MmapUtils.AllocationContext("potato", MmapUtils.AllocationType.MMAP).getContext(), "potato");
     assertEquals(new MmapUtils.AllocationContext(null, "potato", MmapUtils.AllocationType.MMAP).getContext(), "potato");
 
+    assertEquals(
+          new MmapUtils.AllocationContext(new File("a"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+          "a (potato)");
     // With various paths
     String prefix = "/";
     if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
       prefix = "C:\\\\";
+
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a (potato)");
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a/b"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a\\b (potato)");
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a/b/c"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a\\b\\c (potato)");
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a/b/c/d"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a\\b\\c\\d (potato)");
+
+    } else {
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a (potato)");
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a/b"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a/b (potato)");
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a/b/c"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a/b/c (potato)");
+      assertEquals(
+              new MmapUtils.AllocationContext(new File("/a/b/c/d"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
+              prefix + "a/b/c/d (potato)");
     }
-    assertEquals(
-        new MmapUtils.AllocationContext(new File("a"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-        "a (potato)");
-    assertEquals(
-        new MmapUtils.AllocationContext(new File("/a"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-            prefix + "a (potato)");
-    assertEquals(
-        new MmapUtils.AllocationContext(new File("/a/b"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-            prefix + "a/b (potato)");
-    assertEquals(
-        new MmapUtils.AllocationContext(new File("/a/b/c"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-            prefix + "a/b/c (potato)");
-    assertEquals(
-        new MmapUtils.AllocationContext(new File("/a/b/c/d"), "potato", MmapUtils.AllocationType.MMAP).getContext(),
-            prefix + "a/b/c/d (potato)");
+
   }
 }
